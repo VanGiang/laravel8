@@ -113,11 +113,11 @@
                         <div class="product__details__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1">
+                                    <input type="text" class="product-quantity" value="1">
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">ADD TO CARD</a>
+                        <a href="#" class="primary-btn add-to-card" data-product_id="{{ $product->id }}">ADD TO CARD</a>
                         <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
 
                         @if(auth()->id() == $product->user_id)
@@ -311,4 +311,40 @@
     </section>
     <!-- Related Product Section End -->
 
+@endsection
+
+@section('script')
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('.add-to-card').click(function(event) {
+            event.preventDefault();
+
+            var product_id = $(this).data('product_id');
+            var quantity = $('.product-quantity').val();
+
+            var url = '/orders';
+
+            $.ajax(url, {
+                type: 'POST',
+                data: {
+                    product_id: product_id,
+                    quantity: quantity,
+                },
+                success: function (data) {
+                    console.log('success');
+                },
+                error: function () {
+                    console.log('fail');
+                }
+            });
+        });
+
+    });
+</script>
 @endsection

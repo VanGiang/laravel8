@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,3 +41,7 @@ Route::middleware(['auth', 'checkAdmin'])->group(function () {
 Route::resource('products', ProductController::class)->except([
     'create', 'store'
 ]);
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/orders', [OrderController::class, 'store']);
+});

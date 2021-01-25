@@ -7,3 +7,5 @@
 <script src="/ogani/js/mixitup.min.js"></script>
 <script src="/ogani/js/owl.carousel.min.js"></script>
 <script src="/ogani/js/main.js"></script>
+
+@yield('script')
