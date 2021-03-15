@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductOrder;
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProductRequest;
 
 class ProductController extends Controller
 {
+    public $viewData = [];
+
+    public function __construct()
+    {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -72,12 +80,23 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $data = [
-            'product' => Product::findOrFail($id),
-            'user' => auth()->user(),
-        ];
+        // $currentUserId = auth()->id();
+        // $cartNumber = 0;
 
-        return view('products.show', $data);
+        // $currentOrder = Order::where('user_id', $currentUserId)
+        //     ->where('status', 1)
+        //     ->first();
+
+        // if ($currentOrder) {
+        //     $cartNumber = ProductOrder::where('order_id', $currentOrder->id)
+        //         ->sum('quantity');
+        // }
+
+        $this->viewData['product'] = Product::findOrFail($id);
+        $this->viewData['user'] = auth()->user();
+        // $this->viewData['cartNumber'] = $cartNumber;
+
+        return view('products.show', $this->viewData);
     }
 
     /**

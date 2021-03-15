@@ -325,7 +325,7 @@
         $('.add-to-card').click(function(event) {
             event.preventDefault();
 
-            var product_id = $(this).data('product_id');
+            var product_id = $(this).data('product_id'); // data-product_id="value"
             var quantity = $('.product-quantity').val();
 
             var url = '/orders';
@@ -336,11 +336,13 @@
                     product_id: product_id,
                     quantity: quantity,
                 },
-                success: function (data) {
-                    console.log('success');
+                success: function (result) {
+                    var resultObj = JSON.parse(result);
+                    alert(resultObj.msg);
+                    $('#cart-number').text(resultObj.quantity);
                 },
                 error: function () {
-                    console.log('fail');
+                    alert('Something went wrong!');
                 }
             });
         });
