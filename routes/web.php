@@ -44,4 +44,5 @@ Route::resource('products', ProductController::class)->except([
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 });

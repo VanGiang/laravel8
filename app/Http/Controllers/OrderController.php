@@ -9,6 +9,32 @@ use App\Models\Product;
 
 class OrderController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $currentUserId = auth()->id();
+        $order = Order::where('user_id', $currentUserId)
+            ->where('status', 1)
+            ->first();
+
+        $productOrders = null;
+
+        if ($order) {
+            $productOrders = ProductOrder::where('order_id', $order->id)->get();
+        }
+
+        $data = [
+            'user' => auth()->user(),
+            'productOrders' => $productOrders,
+        ];
+        return view('orders.index', $data);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
