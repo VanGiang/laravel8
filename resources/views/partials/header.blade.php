@@ -141,7 +141,7 @@
                     <ul>
                         <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
                         <li>
-                            <a href="#">
+                            <a href="{{ route('orders.index') }}">
                                 <i class="fa fa-shopping-bag"></i>
                                 <span id="cart-number">
                                     {{ showCartNumber() }}
