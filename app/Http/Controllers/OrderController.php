@@ -140,4 +140,33 @@ class OrderController extends Controller
             'quantity' => $cartNumber,
         ]);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($productOrderId)
+    {
+        $productOrder = ProductOrder::find($productOrderId);
+
+        try {
+            $productOrder->delete();
+
+            $result =[
+                'status' => true,
+                'msg' => 'Delete Success!',
+            ];
+        } catch (\Throwable $th) {
+            \Log::error($th);
+
+            $result = [
+                'status' => false,
+                'msg' => 'Delete Success!',
+            ];
+        }
+
+        return json_encode($result);
+    }
 }
