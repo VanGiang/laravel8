@@ -170,7 +170,7 @@
                                         ${{ $productOrder->price * $productOrder->quantity }}
                                     </td>
                                     <td class="shoping__cart__item__close">
-                                        <span class="icon_close"></span>
+                                        <span class="icon_close delete-product" data-product_order_id="{{ $productOrder->id }}"></span>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -213,4 +213,47 @@
     </section>
     <!-- Shoping Cart Section End -->
 
+@endsection
+
+@section('script')
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('.delete-product').click(function(event) {
+            console.log('click ok');
+            event.preventDefault();
+
+            var productElement = $(this).parent().parent();
+
+            var productOrderId = $(this).data('product_order_id');
+
+            var url = '/orders/' + productOrderId;
+
+            $.ajax(url, {
+                type: 'DELETE',
+                success: function (result) {
+                    console.log('success');
+                    var resultObj = JSON.parse(result);
+
+                    if (resultObj.status) {
+                        alert(resultObj.msg);
+                        productElement.remove();
+                    } else {
+                        alert(resultObj.msg);
+                        location.reload();
+                    }
+                },
+                error: function () {
+                    alert('Something went wrong!');
+                }
+            });
+        });
+
+    });
+</script>
 @endsection
