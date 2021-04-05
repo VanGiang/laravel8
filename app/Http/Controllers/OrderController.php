@@ -144,7 +144,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $productOrderId
      * @return \Illuminate\Http\Response
      */
     public function destroy($productOrderId)
@@ -163,7 +163,67 @@ class OrderController extends Controller
 
             $result = [
                 'status' => false,
-                'msg' => 'Delete Success!',
+                'msg' => 'Delete Failed!',
+            ];
+        }
+
+        return json_encode($result);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $productOrderId
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $productOrderId)
+    {
+        $quantity = $request->quantity;
+
+        $productOrder = ProductOrder::find($productOrderId);
+
+        try {
+            $productOrder->quantity = $quantity;
+            $productOrder->save();
+
+            \Log::info('update success');
+            $result =[
+                'status' => true,
+                'msg' => 'Update Success!',
+                'price' => $productOrder->price * $quantity,
+            ];
+        } catch (\Throwable $th) {
+            \Log::error($th);
+            $result = [
+                'status' => false,
+                'msg' => 'Something wrent wrong!',
+            ];
+        }
+
+        return json_encode($result);
+    }
+
+    public function checkout(Request $request)
+    {
+        $currentUser = auth()->user();
+        $order = $currentUser->orders()->where('status', 1)->first();
+
+        try {
+            $order->status = 2;
+            $order->save();
+
+            // Send mail to user
+
+            $result =[
+                'status' => true,
+                'msg' => 'Order Success! Thankyou!',
+            ];
+        } catch (\Throwable $th) {
+            \Log::error($th);
+            $result = [
+                'status' => false,
+                'msg' => 'Something wrent wrong!',
             ];
         }
 

@@ -150,6 +150,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @if ($productOrders)
                                 @foreach ($productOrders as $productOrder)
                                 <tr>
                                     <td class="shoping__cart__item">
@@ -166,7 +167,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="shoping__cart__total">
+                                    <td class="shoping__cart__total total-product-price">
                                         ${{ $productOrder->price * $productOrder->quantity }}
                                     </td>
                                     <td class="shoping__cart__item__close">
@@ -174,6 +175,11 @@
                                     </td>
                                 </tr>
                                 @endforeach
+                                @else
+                                <tr>
+                                    Gio hang trong
+                                </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -202,10 +208,10 @@
                     <div class="shoping__checkout">
                         <h5>Cart Total</h5>
                         <ul>
-                            <li>Subtotal <span>$454.98</span></li>
-                            <li>Total <span>$454.98</span></li>
+                            <li>Subtotal <span class="total-price">$454.98</span></li>
+                            <li>Total <span class="total-price">$454.98</span></li>
                         </ul>
-                        <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                        <a href="#" class="primary-btn cart-checkout">PROCEED TO CHECKOUT</a>
                     </div>
                 </div>
             </div>
@@ -225,7 +231,6 @@
         });
 
         $('.delete-product').click(function(event) {
-            console.log('click ok');
             event.preventDefault();
 
             var productElement = $(this).parent().parent();
@@ -237,7 +242,6 @@
             $.ajax(url, {
                 type: 'DELETE',
                 success: function (result) {
-                    console.log('success');
                     var resultObj = JSON.parse(result);
 
                     if (resultObj.status) {
@@ -254,6 +258,92 @@
             });
         });
 
+        $('.qtybtn').addClass('update-quantity');
+
+        $('.update-quantity').click(function(event) {
+            event.preventDefault();
+
+            var quantity = parseInt($(this).parent().find('input').val());
+
+            if ($(this).hasClass('inc')) {
+                quantity++;
+                $(this).parent().find('.dec').css('display', '');
+            } else {
+                if (quantity <= 1) {
+                    $(this).css('display', 'none');
+                    alert('The quantity has been great than 0');
+
+                    return false;
+                }
+
+                quantity--;
+
+                if (quantity <= 1) {
+                    $(this).css('display', 'none');
+                }
+            }
+            var totalProductPrice = $(this).closest('tr').find('.total-product-price');
+
+            var productOrderId = $(this).closest('tr').find('.delete-product').data('product_order_id');
+
+            var url = '/orders/' + productOrderId;
+
+            $.ajax(url, {
+                type: 'PUT',
+                data: {
+                    quantity: quantity
+                },
+                success: function (result) {
+                    var resultObj = JSON.parse(result);
+
+                    if (!resultObj.status) {
+                        alert(resultObj.msg);
+                        location.reload();
+                    }
+
+                    totalProductPrice.text('$' + resultObj.price);
+
+                    calculatePrice();
+                },
+                error: function () {
+                    alert('Something went wrong!');
+                }
+            });
+        });
+
+        $('.cart-checkout').click(function(event) {
+            event.preventDefault();
+            console.log('gnv444');
+
+            var url = '/orders/checkout';
+
+            $.ajax(url, {
+                type: 'POST',
+                success: function (result) {
+                    var resultObj = JSON.parse(result);
+
+                    alert(resultObj.msg);
+                    location.reload();
+                },
+                error: function () {
+                    alert('Something went wrong!');
+                }
+            });
+        });
+
+        calculatePrice();
+
+        function calculatePrice()
+        {
+            var totalPrice = 0;
+
+            $('.total-product-price').each(function() {
+                var price = parseInt($(this).text().replace('$', ''));
+                totalPrice += price;
+            });
+
+            $('.total-price').text('$' + totalPrice);
+        }
     });
 </script>
 @endsection
