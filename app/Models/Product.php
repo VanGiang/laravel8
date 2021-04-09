@@ -22,4 +22,9 @@ class Product extends Model
         'weight',
         'status',
     ];
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'product_order');
+    }
 }
