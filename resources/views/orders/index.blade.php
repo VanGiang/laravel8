@@ -163,7 +163,7 @@
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input type="text" value="{{ $productOrder->quantity }}">
+                                                <input type="text" class="product-quantity" value="{{ $productOrder->quantity }}">
                                             </div>
                                         </div>
                                     </td>
@@ -313,7 +313,6 @@
 
         $('.cart-checkout').click(function(event) {
             event.preventDefault();
-            console.log('gnv444');
 
             var url = '/orders/checkout';
 
@@ -343,6 +342,13 @@
             });
 
             $('.total-price').text('$' + totalPrice);
+
+            var totalQuantity = 0;
+            $('.product-quantity').each(function() {
+                totalQuantity += parseInt($(this).val());
+            });
+
+            $('#cart-number').text(totalQuantity);
         }
     });
 </script>

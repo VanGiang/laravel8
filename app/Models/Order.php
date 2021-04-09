@@ -14,4 +14,9 @@ class Order extends Model
         'total_price',
         'status',
     ];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_order');
+    }
 }

@@ -214,6 +214,7 @@ class OrderController extends Controller
             $order->save();
 
             // Send mail to user
+            \Mail::to($user->email)->send(new \App\Mail\OrderShipped($details));
 
             $result =[
                 'status' => true,
