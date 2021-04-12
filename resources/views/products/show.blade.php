@@ -83,7 +83,7 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                src="/ogani/img/product/details/product-details-1.jpg" alt="">
+                                src="@if($product->images) {{ asset('storage/products/' . $product->images) }} @else /ogani/img/product/details/product-details-1.jpg @endif" alt="{{ $product->name }}">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
                             <img data-imgbigurl="/ogani/img/product/details/product-details-2.jpg"

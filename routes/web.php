@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 
+// Admin route
+use App\Http\Controllers\Admins\AdminController;
+use App\Http\Controllers\Admins\ProductController as AdminProductController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,10 +47,16 @@ Route::resource('products', ProductController::class)->except([
     'create', 'store'
 ]);
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'checkAdmin'])->group(function () {
     Route::post('/orders/checkout', [OrderController::class, 'checkout']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::delete('/orders/{product_order_id}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::put('/orders/{product_order_id}', [OrderController::class, 'update'])->name('orders.update');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/admin/products/create', [AdminProductController::class, 'create'])->name('admin.products.create');
+    Route::post('/admin/products', [AdminProductController::class, 'store'])->name('admin.products');
 });
