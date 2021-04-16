@@ -30,7 +30,7 @@ class StoreProductRequest extends FormRequest
             'code' => 'required|unique:products',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
-            'description' => [new CustomDes],
+            // 'description' => [new CustomDes],
         ];
 
         if ($this->method() == 'PUT') {
