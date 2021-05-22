@@ -20,3 +20,5 @@ mix.js('resources/js/app.js', 'public/js')
 
 
 mix.copyDirectory('resources/theme/ogani-master', 'public/ogani');
+
+mix.copy('node_modules/chart.js/dist/chart.js', 'public/js');

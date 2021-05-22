@@ -7,13 +7,60 @@
 @stop
 
 @section('content')
-    <p>Welcome to this beautiful admin panel.</p>
+<div>
+  <canvas id="myChart2"></canvas>
+</div>
+
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+    <!-- <link rel="stylesheet" href="/css/admin_custom.css"> -->
 @stop
 
 @section('js')
-    <script> console.log('Hi!'); </script>
+    <script src="/js/chart.js"></script>
+
+<script>
+
+// const labels = [
+//   'January',
+//   'February',
+//   'March',
+//   'April',
+//   'May',
+//   'June',
+// ];
+
+
+const labels = @json($daily);
+
+// console.log(typeof labels);
+// console.log(labels);
+
+
+const prices = @json($prices);
+
+// console.log(prices);
+const data = {
+  labels: labels,
+  datasets: [{
+    label: 'My First dataset',
+    backgroundColor: 'rgb(255, 99, 132)',
+    borderColor: 'rgb(255, 99, 132)',
+    // data: [0, 10, 5, 2, 20, 30, 45],
+    data: prices,
+  }]
+};
+
+const config = {
+  type: 'line',
+  data,
+  options: {}
+};
+
+var myChart = new Chart(
+    document.getElementById('myChart2'),
+    config
+  );
+</script>
 @stop
