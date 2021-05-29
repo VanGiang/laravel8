@@ -26,7 +26,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(1);
+        $products = $this->productService->getListProducts();
+
         $data = [
             'user' => auth()->user(),
             'products' => $products,

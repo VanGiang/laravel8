@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Models\ProductOrder;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProductRequest;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
     public $viewData = [];
+    public $productService;
 
-    public function __construct()
+    public function __construct(ProductService $productService)
     {
+        $this->productService = $productService;
     }
 
     /**
@@ -24,7 +26,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(1);
+        $orders = [
+            'order_by' => 'created_at',
+            'order_type' => 'desc',
+        ];
+        $products = $this->productService->getListProducts([], $orders, 2);
+
         $data = [
             'user' => auth()->user(),
             'products' => $products,
@@ -61,15 +68,17 @@ class ProductController extends Controller
             'description',
         ]);
 
-        try {
-            $product = Product::create(array_merge($inputData, [
-                'user_id' => auth()->id()
-            ]));
+        $inputs = array_merge($inputData, [
+            'user_id' => auth()->id()
+        ]);
 
+        $product = $this->productService->create($inputs);
+
+        if ($product) {
             return redirect('/products/' . $product->id);
-        } catch (\Throwable $th) {
-            return back()->with('status', 'Create failed!');;
         }
+
+        return back()->with('status', 'Create failed!');;
     }
 
     /**
@@ -92,7 +101,7 @@ class ProductController extends Controller
         //         ->sum('quantity');
         // }
 
-        $this->viewData['product'] = Product::findOrFail($id);
+        $this->viewData['product'] = $this->productService->getProduct($id);
         $this->viewData['user'] = auth()->user();
         // $this->viewData['cartNumber'] = $cartNumber;
 
@@ -107,7 +116,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::find($id);
+        $product = $this->productService->getProduct($id);
         if (!$product) {
             abort(404);
         }
@@ -130,20 +139,22 @@ class ProductController extends Controller
     public function update(StoreProductRequest $request, $id)
     {
         $inputData = $request->all();
-        $product = Product::find($id);
+        $product = $this->productService->getProduct($id);
 
-        try {
-            $product->update([
-                'name' => $inputData['name'],
-                'price' => $inputData['price'],
-                'quantity' => $inputData['quantity'],
-                'description' => $inputData['description'],
-            ]);
+        $inputs = [
+            'name' => $inputData['name'],
+            'price' => $inputData['price'],
+            'quantity' => $inputData['quantity'],
+            'description' => $inputData['description'],
+        ];
 
+        $updateFlg = $this->productService->update($product, $inputs);
+
+        if ($updateFlg) {
             return redirect('/products/' . $product->id);
-        } catch (\Throwable $th) {
-            return back()->with('status', 'Update failed!');;
         }
+
+        return back()->with('status', 'Update failed!');
     }
 
     /**
@@ -154,14 +165,14 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product = Product::find($id);
+        $product = $this->productService->getProduct($id);
 
-        try {
-            $product->delete();
+        $delFlg = $this->productService->delete($product);
 
+        if ($delFlg) {
             return redirect('/products')->with('status', 'Delete Success!');
-        } catch (\Throwable $th) {
-            return back()->with('status', 'Delete Failure!');
         }
+
+        return back()->with('status', 'Delete Failure!');
     }
 }
