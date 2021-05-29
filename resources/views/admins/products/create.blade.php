@@ -88,4 +88,5 @@
 
 @section('js')
     <script> console.log('Hi!'); </script>
+    <script src="{{ mix('js/test1.js') }}"></script>
 @stop

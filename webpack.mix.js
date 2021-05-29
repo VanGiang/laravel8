@@ -16,7 +16,8 @@ mix.js('resources/js/app.js', 'public/js')
         require('postcss-import'),
         require('tailwindcss'),
     ])
-    .webpackConfig(require('./webpack.config'));
+    .webpackConfig(require('./webpack.config'))
+    .js('resources/js/es6/test1.js', 'public/js');
 
 
 mix.copyDirectory('resources/theme/ogani-master', 'public/ogani');
